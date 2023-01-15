@@ -1,0 +1,99 @@
+$text-color: #1d1d1f;
+$text-secondary-color: #e7edee;
+
+$red-color: #e22d00;
+$grey-color: #1d1d1f;
+$green-color: #185218;
+
+
+.car-game{
+  display: flex;
+}
+
+.game-controls{
+  display: flex;
+  flex-direction: column;
+}
+
+.car-info{
+  flex-grow: 1;
+  border-bottom: #1f1e1e dashed 3px;
+}
+
+.car{
+  margin-bottom: 2em;
+}
+
+.button {
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid $red-color;
+  border-radius: 6px;
+  background-color: $red-color;
+  color: #fff;
+  font-size: 16px;
+  transition: all .8s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  padding: 10px;
+  margin: 10px;
+
+  &:hover{
+    color: $red-color;
+    border: 1px solid $text-color;
+
+    &::before {
+      transform: translateX(0);
+    }
+  }
+
+  &:active::before {
+    background: #fff;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    transition: all .5s;
+    z-index: -1;
+    transform: translateX(-101%);
+  }
+
+  &--edit, &--remove{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid $grey-color;
+    background-color: $grey-color;
+    &:hover{
+      color: $grey-color;
+    }
+  }
+
+  &--start{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid $green-color;
+    background-color: $green-color;
+    flex-grow: 1;
+    &:hover{
+      color: $green-color;
+    }
+  }
+
+  &--stop{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid $red-color;
+    background-color: $red-color;
+    flex-grow: 1;
+    &:hover{
+      color: $red-color;
+    }
+  }
+}
