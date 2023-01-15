@@ -1,5 +1,6 @@
 import { MPComponent } from '../framework/index';
 import { ComponentConfig } from '../framework/tools/interfaces';
+import { appHeader } from './common/app.header';
 
 export class AppComponent extends MPComponent {
   constructor(config: ComponentConfig) {
@@ -16,5 +17,5 @@ export const appComponent = new AppComponent({
         </main>
         <app-footer></app-footer>
     `,
-  childComponents: [],
+  childComponents: [appHeader],
 });

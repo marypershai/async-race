@@ -10,5 +10,11 @@ export interface ComponentConfig {
 export interface ModuleConfig {
   components: Components[];
   bootstrap: AppComponent;
+  routes: RoutesObj[];
   // dynamicRoutes: (id: string) => void;
+}
+
+export interface RoutesObj {
+  path: string;
+  component: Components;
 }
