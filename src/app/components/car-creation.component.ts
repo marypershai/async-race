@@ -10,7 +10,7 @@ export class CarCreationComponent extends MPComponent {
     this.createCarCreationBlock();
   }
 
-  createCarCreationBlock(): void {
+  public createCarCreationBlock(): void {
     this.template = `
     <div class="create-car">
       <input class="input-car-name" type="text" required>
