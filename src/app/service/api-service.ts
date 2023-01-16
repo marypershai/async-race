@@ -6,7 +6,8 @@ const garage = `${serverURL}/garage`;
 
 export async function getCars(): Promise<CarObj[]> {
   const response = await fetch(`${garage}`);
-  return response.json();
+  const result = await response.json();
+  return result;
 }
 
 export async function  createCar(config: CarObj): Promise<void> {

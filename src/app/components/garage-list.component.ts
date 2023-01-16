@@ -11,13 +11,12 @@ export class GarageListComponent extends MPComponent {
     this.createList();
   }
 
-  public async createList(): Promise<string> {
+  public async createList(): Promise<void> {
     const carlist: CarObj[] = await getCars();
     carlist.forEach((car: CarObj) => {
       this.template += `${createCarUI(car)}`;
     });
     this.render();
-    return this.template;
   }
 }
 
