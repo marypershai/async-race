@@ -11,7 +11,6 @@ export async function getCars(page: number): Promise<CarObj[]> {
   const result = await response.json();
   const totalCars: string = response.headers.get('X-Total-Count') ?? '';
   localStorage.setItem('totalCars', totalCars);
-  console.log(`${garage}?_page=${page}&_limit=${MAX_CARS_ON_GARAGE_PAGE}`);
   return result;
 }
 

@@ -18,7 +18,6 @@ export class GarageListComponent extends MPComponent {
     const carList: CarObj[] = await getCars(+currentPage);
     const totalCars: number = await getAllCarsCounter();
     this.template = `<div><h1>Garage list (${totalCars})</h1></div>`;
-    console.log(carList);
     carList.forEach((car: CarObj) => {
       this.template += `${createCarUI(car)}`;
     });
