@@ -2,6 +2,7 @@ import { CarObj, ComponentConfig } from '../../framework/tools/interfaces';
 import { MPComponent } from '../../framework/index';
 import { garageListComponent } from './garage-list.component';
 import { createCar } from '../service/api-service';
+import { garageButtonsComponent } from './garage-buttons.component';
 
 
 export class CarCreationComponent extends MPComponent {
@@ -34,6 +35,7 @@ export class CarCreationComponent extends MPComponent {
     if (targetEl && carName !== '') {
       await createCar(car);
       await garageListComponent.createList();
+      await garageButtonsComponent.createButtonsBlock();
     }
   }
 }
