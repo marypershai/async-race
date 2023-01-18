@@ -16,7 +16,7 @@ export function createCarUI(config: CarObj): string {
             <div class="car-info">
             <div class="car-title"><h4>${config.name}</h4></div>
             <div class="car-img">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="125" height="95" viewBox="0 0 256 200" xml:space="preserve">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="125" height="95" viewBox="0 0 252.9 176" xml:space="preserve">
                 <defs>
                 </defs>
                 <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: ${config.color}; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)" >

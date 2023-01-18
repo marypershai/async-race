@@ -4,6 +4,7 @@ $text-secondary-color: #e7edee;
 $red-color: #e22d00;
 $grey-color: #1d1d1f;
 $green-color: #185218;
+$light-grey-color: #818381;
 
 
 .car-game{
@@ -94,6 +95,24 @@ $green-color: #185218;
     flex-grow: 1;
     &:hover{
       color: $red-color;
+    }
+  }
+
+  &:disabled{
+    border: 1px solid $light-grey-color;
+    background-color: $light-grey-color;
+    color: $light-grey-color;
+    cursor: auto;
+    &:hover{
+      color: $light-grey-color;
+      &::before{
+        transition: none;
+        transform: none;
+      }
+    }
+    &::before{
+      transition: none;
+      transform: none;
     }
   }
 }
