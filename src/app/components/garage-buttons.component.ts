@@ -41,20 +41,25 @@ export class GarageButtonsComponent extends MPComponent {
 
   public events(): Record<string, string> {
     return {
-      // 'click .button--prev': 'getPreviousPage',
+      'click .button--prev': 'getPreviousPage',
       'click .button--next': 'getNextPage',
     };
   }
 
-  private async getPreviousPage(event:Event) {
+  private async getPreviousPage():Promise<void> {
     const totalCarsPagesCounter = await getGaragePagesCounter();
     if (totalCarsPagesCounter > 1 ) {
-      // await garageListComponent.render();
-      console.log(event);
+      const currentPage: number = +storage.getCurrentPage('garagePage');
+      const prevPage: number = currentPage - 1;
+      storage.setCurrentPage('garagePage', prevPage);
+      await garageListComponent.createList();
+      if (prevPage === 1) {
+        (document.querySelector('.button--prev') as HTMLElement).setAttribute('disabled', '');
+      }
     }
   }
 
-  private async getNextPage() {
+  private async getNextPage(): Promise<void> {
     const totalCarsPagesCounter = await getGaragePagesCounter();
     if (totalCarsPagesCounter > 1 ) {
       const currentPage: number = +storage.getCurrentPage('garagePage');
@@ -72,10 +77,10 @@ export class GarageButtonsComponent extends MPComponent {
 export const garageButtonsComponent = new GarageButtonsComponent({
   selector: 'app-garage-buttons',
   template: `
-  <div class="buttons">
-        <button class="button button--prev">Prev</button>
-        <button class="button button--next">Next</button>
+    <div class="buttons">
+          <button class="button button--prev">Prev</button>
+          <button class="button button--next">Next</button>
     </div> 
-`,
+  `,
   childComponents: [],
 });
