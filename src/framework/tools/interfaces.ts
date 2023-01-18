@@ -18,3 +18,8 @@ export interface RoutesObj {
   path: string;
   component: Components;
 }
+
+export interface CarObj {
+  name: string,
+  color: string
+}
