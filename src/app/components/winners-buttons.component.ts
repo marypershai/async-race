@@ -1,11 +1,11 @@
 import { ComponentConfig } from '../../framework/tools/interfaces';
 import { MPComponent } from '../../framework/index';
-import { garageListComponent } from './garage-list.component';
 import { getGaragePagesCounter } from '../service/api-service';
 import { storage } from '../service/localStorage-service';
+import { winnersListComponent } from './winners-list.component';
 
 
-export class GarageButtonsComponent extends MPComponent {
+export class WinnersButtonsComponent extends MPComponent {
   constructor(config: ComponentConfig) {
     super(config);
     this.createButtonsBlock();
@@ -20,7 +20,7 @@ export class GarageButtonsComponent extends MPComponent {
         <button class="button button--next" ${buttonNext}>Next</button>
     </div> 
     `;
-    const tag = document.querySelector('app-garage-buttons') as HTMLElement;
+    const tag = document.querySelector('app-winners-buttons') as HTMLElement;
     if (tag) {
       this.render();
     }
@@ -28,7 +28,7 @@ export class GarageButtonsComponent extends MPComponent {
 
   private async checkButtonStatus(button: string): Promise<string> {
     const totalCarsPagesCounter: number = await getGaragePagesCounter();
-    const currentPage: number = +storage.getCurrentPage('garagePage');
+    const currentPage: number = +storage.getCurrentPage('winnersPage');
     if (totalCarsPagesCounter > 1) {
       if (button === 'prev') {
         if (currentPage > 1) {
@@ -52,15 +52,12 @@ export class GarageButtonsComponent extends MPComponent {
   private async getPreviousPage():Promise<void> {
     const totalCarsPagesCounter = await getGaragePagesCounter();
     if (totalCarsPagesCounter > 1 ) {
-      const currentPage: number = +storage.getCurrentPage('garagePage');
+      const currentPage: number = +storage.getCurrentPage('winnersPage');
       const prevPage: number = currentPage - 1;
-      storage.setCurrentPage('garagePage', prevPage);
-      await garageListComponent.createList();
+      storage.setCurrentPage('winnersPage', prevPage);
+      await winnersListComponent.createList();
       if (prevPage === 1) {
         (document.querySelector('.button--prev') as HTMLElement).setAttribute('disabled', '');
-      }
-      if (currentPage < totalCarsPagesCounter) {
-        (document.querySelector('.button--next') as HTMLElement).removeAttribute('disabled');
       }
     }
   }
@@ -68,10 +65,10 @@ export class GarageButtonsComponent extends MPComponent {
   private async getNextPage(): Promise<void> {
     const totalCarsPagesCounter = await getGaragePagesCounter();
     if (totalCarsPagesCounter > 1 ) {
-      const currentPage: number = +storage.getCurrentPage('garagePage');
+      const currentPage: number = +storage.getCurrentPage('winnersPage');
       const nextPage: number = currentPage + 1;
-      storage.setCurrentPage('garagePage', nextPage);
-      await garageListComponent.createList();
+      storage.setCurrentPage('winnersPage', nextPage);
+      await winnersListComponent.createList();
       (document.querySelector('.button--prev') as HTMLElement).removeAttribute('disabled');
       if (totalCarsPagesCounter === nextPage) {
         (document.querySelector('.button--next') as HTMLElement).setAttribute('disabled', '');
@@ -80,8 +77,8 @@ export class GarageButtonsComponent extends MPComponent {
   }
 }
 
-export const garageButtonsComponent = new GarageButtonsComponent({
-  selector: 'app-garage-buttons',
+export const winnersButtonsComponent = new WinnersButtonsComponent({
+  selector: 'app-winners-buttons',
   template: `
     <div class="buttons">
           <button class="button button--prev">Prev</button>
