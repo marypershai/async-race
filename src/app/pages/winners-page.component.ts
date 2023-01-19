@@ -1,5 +1,7 @@
 import { MPComponent } from '../../framework/index';
 import { ComponentConfig } from '../../framework/tools/interfaces';
+import { winnersListComponent } from '../components/winners-list.component';
+import { winnersButtonsComponent } from '../components/winners-buttons.component';
 
 class WinnersPageComponent extends MPComponent {
   constructor(config: ComponentConfig) {
@@ -9,8 +11,9 @@ class WinnersPageComponent extends MPComponent {
 
 export const winnersPageComponent = new WinnersPageComponent({
   selector: 'app-winners-page',
-  template: `
-        <h1>Winners</h1>             
+  template: `   
+        <app-winners-list></app-winners-list>     
+        <app-winners-buttons></app-winners-buttons>
     `,
-  childComponents: [],
+  childComponents: [winnersListComponent, winnersButtonsComponent],
 });

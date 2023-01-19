@@ -23,3 +23,9 @@ export interface CarObj {
   name: string,
   color: string
 }
+
+export interface WinnerObj {
+  id: number,
+  wins: number,
+  time: number
+}

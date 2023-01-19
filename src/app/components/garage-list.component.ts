@@ -21,7 +21,10 @@ export class GarageListComponent extends MPComponent {
     carList.forEach((car: CarObj) => {
       this.template += `${createCarUI(car)}`;
     });
-    this.render();
+    const tag = document.querySelector('app-garage-list') as HTMLElement;
+    if (tag) {
+      this.render();
+    }
   }
 }
 
