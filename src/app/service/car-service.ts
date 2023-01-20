@@ -17,7 +17,6 @@ export function createCarImg(color: string): string {
 export function createCarUI(config: CarObj): string {
 
   const templateCar = `
-    <div class='car'>
         <div class="buttons">
             <button class="button button--edit">Edit car</button>
             <button class="button button--remove">Remove car</button>
@@ -34,7 +33,6 @@ export function createCarUI(config: CarObj): string {
             </div>
         </div>
         </div>   
-    </div>
   `;
 
   return templateCar;

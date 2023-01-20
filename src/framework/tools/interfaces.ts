@@ -21,7 +21,8 @@ export interface RoutesObj {
 
 export interface CarObj {
   name: string,
-  color: string
+  color: string,
+  id?: number
 }
 
 export interface WinnerObj {
