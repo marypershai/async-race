@@ -56,3 +56,19 @@ export async function  createCar(config: CarObj): Promise<void> {
     },
   })).json();
 }
+
+export async function deleteCar(id: number): Promise<number> {
+  const response = await fetch(`${garage}/${id}`, { method: 'DELETE' });
+  const result = await response.json();
+  return result;
+}
+
+export async function  updateCar(id: number, config: CarObj): Promise<void> {
+  await (await fetch(`${garage}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(config),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })).json();
+}
