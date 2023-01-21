@@ -25,6 +25,15 @@ $light-grey-color: #818381;
   margin-bottom: 2em;
 }
 
+.car-block{
+  display: flex;
+  justify-content: space-between;
+}
+
+.flag{
+  margin-right: 160px;
+}
+
 .button {
   cursor: pointer;
   background-color: transparent;

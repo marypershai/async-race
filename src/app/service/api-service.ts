@@ -4,6 +4,7 @@ const serverURL = 'http://localhost:3000';
 
 const garage = `${serverURL}/garage`;
 const winners = `${serverURL}/winners`;
+const engine = `${serverURL}/engine`;
 
 export const MAX_CARS_ON_GARAGE_PAGE = 7;
 export const MAX_CARS_ON_WINNERS_PAGE = 10;
@@ -71,4 +72,32 @@ export async function  updateCar(id: number, config: CarObj): Promise<void> {
       'Content-Type': 'application/json',
     },
   })).json();
+}
+
+export async function startEngine(id: number) {
+  const response = await fetch(`${engine}?id=${id}&status=started`, { method: 'PATCH' });
+  if (response.status == 200) {
+    const result = await response.json();
+    return result;
+  }
+  throw new Error(`${response.status}`);
+}
+
+export async function stopEngine(id: string) {
+  const response = await fetch(`${engine}?id=${id}&status=stopped`, { method: 'PATCH' });
+  if (response.status == 200) {
+    const result = await response.json();
+    return result;
+  }
+  throw new Error(`${response.status}`);
+}
+
+export async function driveEngine(id: number): Promise<{ success: boolean }> {
+  const response = await fetch(`${engine}?id=${id}&status=drive`, { method: 'PATCH' }).catch();
+  return response.status !== 200 ? { success: false } : { ...(await response.json()) };
+  // if (response.status == 200) {
+  //   const result = await response.json();
+  //   return result;
+  // }
+  // throw new Error(`${ response.status}`);
 }
