@@ -1,8 +1,17 @@
 import { CarObj, ComponentConfig } from '../../framework/tools/interfaces';
 import { MPComponent } from '../../framework/index';
-import { deleteCar, getAllCarsCounter, getCar, getCars } from '../service/api-service';
+import {
+  deleteCar,
+  driveEngine,
+  getAllCarsCounter,
+  getCar,
+  getCars,
+  startEngine,
+  stopEngine,
+} from '../service/api-service';
 import { createCarUI } from '../service/car-service';
 import { storage } from '../service/localStorage-service';
+import { animation, getDistanceBetweenElements } from '../service/animation-service';
 
 
 export class GarageListComponent extends MPComponent {
@@ -21,7 +30,7 @@ export class GarageListComponent extends MPComponent {
       <div>
           <h1>Garage list (${totalCars})</h1>
       </div>
-      <div class="buttons--edit buttons--remove">
+      <div class="buttons--edit buttons--remove buttons--start buttons--stop">
     `;
     carList.forEach((car: CarObj) => {
       this.template += `
@@ -40,6 +49,8 @@ export class GarageListComponent extends MPComponent {
     return {
       'click .buttons--edit': 'editCar',
       'click .buttons--remove': 'removeCar',
+      'click .buttons--start': 'startCar',
+      'click .buttons--stop': 'stopCar',
     };
   }
 
@@ -63,16 +74,57 @@ export class GarageListComponent extends MPComponent {
   }
 
   private async removeCar(event: Event): Promise<void> {
-    console.log('target');
     const target = event.target as HTMLElement;
     const carEl = target.closest('.car') as HTMLElement;
     const carID: string | null = carEl.getAttribute('data-id');
-    console.log(target.closest('.button--remove'));
-    console.log(carID);
-    if (carID) {
+    if (carID && target.classList.contains('button--remove')) {
       await deleteCar(+carID);
-      console.log('delete');
       await this.createList();
+    }
+  }
+
+  private async startCar(event: Event): Promise<void> {
+    const startButton = event.target as HTMLInputElement;
+    const carEl = startButton.closest('.car') as HTMLElement;
+
+    const carID: string | null = carEl.getAttribute('data-id');
+
+    if (carID && startButton.classList.contains('button--start')) {
+      startButton.setAttribute('disabled', '');
+      const stopButton = carEl.querySelector('.button--stop') as HTMLElement;
+      stopButton.removeAttribute('disabled');
+      const { velocity, distance } = await startEngine(+carID);
+      const time: number = Math.round(distance / velocity);
+
+      const car = carEl.querySelector('.car-img') as HTMLElement;
+      const flag = carEl.querySelector('.flag') as HTMLElement;
+
+      const htmlDistance = Math.floor(getDistanceBetweenElements(car, flag)) + 120;
+
+      const animationID: { id: number } = animation(car, htmlDistance, time);
+      const { success } = await driveEngine(+carID);
+      window.cancelAnimationFrame(10);
+      if (!success) {
+        window.cancelAnimationFrame(animationID.id);
+      }
+    }
+  }
+
+  private async stopCar(event: Event): Promise<void> {
+    const stopButton = event.target as HTMLInputElement;
+    const carEl = stopButton.closest('.car') as HTMLElement;
+    const startButton = carEl.querySelector('.button--start') as HTMLElement;
+    const carID: string | null = carEl.getAttribute('data-id');
+    if (carID && stopButton.classList.contains('button--stop')) {
+      await stopEngine(carID);
+      stopButton.setAttribute('disabled', '');
+      startButton.removeAttribute('disabled');
+      const car = carEl.querySelector('.car-img') as HTMLElement;
+      car.style.transform = 'translateX(0)';
+      const animationID = localStorage.getItem('animationID');
+      if (animationID) {
+        window.cancelAnimationFrame(+animationID);
+      }
     }
   }
 }
