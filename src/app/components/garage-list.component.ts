@@ -1,6 +1,7 @@
 import { CarObj, ComponentConfig } from '../../framework/tools/interfaces';
 import { MPComponent } from '../../framework/index';
 import {
+  createCar,
   deleteCar,
   driveEngine,
   getAllCarsCounter,
@@ -12,6 +13,7 @@ import {
 import { createCarUI } from '../service/car-service';
 import { storage } from '../service/localStorage-service';
 import { animation, getDistanceBetweenElements } from '../service/animation-service';
+import { generateRandomCars } from '../service/random-service';
 
 
 export class GarageListComponent extends MPComponent {
@@ -29,6 +31,7 @@ export class GarageListComponent extends MPComponent {
     this.template = `
       <div>
           <h1>Garage list (${totalCars})</h1>
+          <div class="button button--create">Create 100 cars</div>
       </div>
       <div class="buttons--edit buttons--remove buttons--start buttons--stop">
     `;
@@ -51,6 +54,7 @@ export class GarageListComponent extends MPComponent {
       'click .buttons--remove': 'removeCar',
       'click .buttons--start': 'startCar',
       'click .buttons--stop': 'stopCar',
+      'click .button--create': 'createCars',
     };
   }
 
@@ -126,6 +130,14 @@ export class GarageListComponent extends MPComponent {
         window.cancelAnimationFrame(+animationID);
       }
     }
+  }
+
+  public createCars() {
+    const arrNewCars: CarObj[] = generateRandomCars(100);
+    arrNewCars.forEach(async (newCar) => {
+      await createCar(newCar);
+    });
+    this.createList();
   }
 }
 
