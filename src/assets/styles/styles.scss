@@ -124,4 +124,13 @@ $light-grey-color: #818381;
       transform: none;
     }
   }
+  &--create {
+    width: 100px;
+    border: 1px solid $grey-color;
+    background-color: $grey-color;
+    color: #fff;
+    &:hover {
+      color: $grey-color;
+    }
+  }
 }

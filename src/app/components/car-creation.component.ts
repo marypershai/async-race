@@ -12,18 +12,31 @@ export class CarCreationComponent extends MPComponent {
   }
 
   public createCarCreationBlock(): void {
+    const data: string | null = localStorage.getItem('addCar');
+    let carInfo: CarObj;
+    console.log(data);
+    if (data) {
+      carInfo = JSON.parse(data);
+    } else {
+      carInfo = {
+        name: '',
+        color: '#000000',
+      };
+    }
     this.template = `
-    <div class="create-car">
-      <input class="input-car-name" type="text" required>
-      <input  class="color-picker" type="color" value="#000000">
-      <button class="button add-car">Add car</button>
-    </div>
+        <div class="create-car">
+          <input class="input-car-name" type="text" required value="${carInfo.name}">
+          <input  class="color-picker" type="color" value="${carInfo.color}">
+          <button class="button add-car">Add car</button>
+        </div>
     `;
   }
 
   public events(): Record<string, string> {
     return {
       'click .add-car': 'addCar',
+      'keyup .input-car-name': 'saveData',
+      'change .color-picker': 'saveData',
     };
   }
 
@@ -32,11 +45,20 @@ export class CarCreationComponent extends MPComponent {
     const carColor: string = (document.querySelector('.color-picker') as HTMLInputElement).value;
     const carName: string = (document.querySelector('.input-car-name') as HTMLInputElement).value;
     const car: CarObj = { name: `${carName}`, color: `${carColor}` };
+    localStorage.setItem('addCar', JSON.stringify(car));
     if (targetEl && carName !== '') {
       await createCar(car);
       await garageListComponent.createList();
       await garageButtonsComponent.createButtonsBlock();
     }
+  }
+
+  private saveData() {
+    const carName: string = (document.querySelector('.input-car-name') as HTMLInputElement).value;
+    const carColor: string = (document.querySelector('.color-picker') as HTMLInputElement).value;
+    const car: CarObj = { name: `${carName}`, color: `${carColor}` };
+    localStorage.setItem('addCar', JSON.stringify(car));
+    this.createCarCreationBlock();
   }
 }
 
