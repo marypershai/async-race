@@ -10,7 +10,6 @@ function getRandomInt(max: number) {
 function getRandomName(): string {
   const model = models[getRandomInt(models.length)];
   const name = names[getRandomInt(names.length)];
-  console.log(getRandomInt(models.length));
   return `${model} ${name}`;
 }
 

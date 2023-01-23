@@ -32,9 +32,13 @@ export class Component {
       const events = Object.getPrototypeOf(this).events();
       Object.keys(events).forEach((key) => {
         const listner = key.split(' ');
-        if (this.element) {
-          (this.element.querySelector(listner[1]) as HTMLElement)
-            .addEventListener(listner[0], Object.getPrototypeOf(this)[events[key]].bind(this));
+        try {
+          if (this.element) {
+            (this.element.querySelector(listner[1]) as HTMLElement)
+              .addEventListener(listner[0], Object.getPrototypeOf(this)[events[key]].bind(this));
+          }
+        } catch {
+          console.log('Smth was broken');
         }
       });
     }

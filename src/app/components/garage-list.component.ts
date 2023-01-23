@@ -1,4 +1,4 @@
-import { CarObj, ComponentConfig } from '../../framework/tools/interfaces';
+import { CarObj, ComponentConfig, WinnerObj } from '../../framework/tools/interfaces';
 import { MPComponent } from '../../framework/index';
 import {
   createCar,
@@ -6,14 +6,15 @@ import {
   driveEngine,
   getAllCarsCounter,
   getCar,
-  getCars,
+  getCars, getWinner, setWinner,
   startEngine,
-  stopEngine,
+  stopEngine, updateWinner,
 } from '../service/api-service';
 import { createCarUI } from '../service/car-service';
 import { storage } from '../service/localStorage-service';
 import { animation, getDistanceBetweenElements } from '../service/animation-service';
 import { generateRandomCars } from '../service/random-service';
+import { winnersListComponent } from './winners-list.component';
 
 
 export class GarageListComponent extends MPComponent {
@@ -31,7 +32,10 @@ export class GarageListComponent extends MPComponent {
     this.template = `
       <div>
           <h1>Garage list (${totalCars})</h1>
-          <div class="button button--create">Create 100 cars</div>
+          <h3>Page #${currentPage}</h3>
+          <button class="button button--create">Create 100 cars</button>
+          <button class="button button--race">Race</button>
+          <button class="button button--reset">Reset</button>
       </div>
       <div class="buttons--edit buttons--remove buttons--start buttons--stop">
     `;
@@ -55,6 +59,8 @@ export class GarageListComponent extends MPComponent {
       'click .buttons--start': 'startCar',
       'click .buttons--stop': 'stopCar',
       'click .button--create': 'createCars',
+      'click .button--race': 'race',
+      'click .button--reset': 'reset',
     };
   }
 
@@ -94,41 +100,16 @@ export class GarageListComponent extends MPComponent {
     const carID: string | null = carEl.getAttribute('data-id');
 
     if (carID && startButton.classList.contains('button--start')) {
-      startButton.setAttribute('disabled', '');
-      const stopButton = carEl.querySelector('.button--stop') as HTMLElement;
-      stopButton.removeAttribute('disabled');
-      const { velocity, distance } = await startEngine(+carID);
-      const time: number = Math.round(distance / velocity);
-
-      const car = carEl.querySelector('.car-img') as HTMLElement;
-      const flag = carEl.querySelector('.flag') as HTMLElement;
-
-      const htmlDistance = Math.floor(getDistanceBetweenElements(car, flag)) + 120;
-
-      const animationID: { id: number } = animation(car, htmlDistance, time);
-      const { success } = await driveEngine(+carID);
-      window.cancelAnimationFrame(10);
-      if (!success) {
-        window.cancelAnimationFrame(animationID.id);
-      }
+      this.startDrive(+carID);
     }
   }
 
   private async stopCar(event: Event): Promise<void> {
     const stopButton = event.target as HTMLInputElement;
     const carEl = stopButton.closest('.car') as HTMLElement;
-    const startButton = carEl.querySelector('.button--start') as HTMLElement;
     const carID: string | null = carEl.getAttribute('data-id');
     if (carID && stopButton.classList.contains('button--stop')) {
-      await stopEngine(carID);
-      stopButton.setAttribute('disabled', '');
-      startButton.removeAttribute('disabled');
-      const car = carEl.querySelector('.car-img') as HTMLElement;
-      car.style.transform = 'translateX(0)';
-      const animationID = localStorage.getItem('animationID');
-      if (animationID) {
-        window.cancelAnimationFrame(+animationID);
-      }
+      this.stopDrive(+carID);
     }
   }
 
@@ -138,6 +119,92 @@ export class GarageListComponent extends MPComponent {
       await createCar(newCar);
     });
     this.createList();
+  }
+
+  private async startDrive(id: number):Promise<{ success: boolean, time: number, id: number }> {
+    const carEl = document.querySelector(`[data-id = '${id}']`) as HTMLElement;
+    const startButton = carEl.querySelector('.button--start') as HTMLElement;
+    startButton.setAttribute('disabled', '');
+    const stopButton = carEl.querySelector('.button--stop') as HTMLElement;
+    stopButton.removeAttribute('disabled');
+
+    const { velocity, distance } = await startEngine(id);
+    const time: number = Math.round(distance / velocity);
+
+    const car = carEl.querySelector('.car-img') as HTMLElement;
+    const flag = carEl.querySelector('.flag') as HTMLElement;
+
+    const htmlDistance = Math.floor(getDistanceBetweenElements(car, flag)) + 60;
+
+    const animationID: { id: number } = animation(car, htmlDistance, time);
+    const { success } = await driveEngine(id);
+    window.cancelAnimationFrame(10);
+    if (!success) {
+      window.cancelAnimationFrame(animationID.id);
+    }
+    return { success, time, id };
+  }
+
+  private async stopDrive(id: number) {
+    const carEl = document.querySelector(`[data-id = '${id}']`) as HTMLElement;
+    const stopButton = carEl.querySelector('.button--stop') as HTMLElement;
+    const startButton = carEl.querySelector('.button--start') as HTMLElement;
+    await stopEngine(`${id}`);
+    stopButton.setAttribute('disabled', '');
+    startButton.removeAttribute('disabled');
+    const car = carEl.querySelector('.car-img') as HTMLElement;
+    car.style.transform = 'translateX(0)';
+    const animationID = localStorage.getItem('animationID');
+    if (animationID) {
+      window.cancelAnimationFrame(+animationID);
+    }
+  }
+
+  private async race() {
+    const currentPage: string | null = localStorage.getItem('garagePage');
+    if (currentPage) {
+      const cars: CarObj[] = await getCars(+currentPage);
+      const promises = cars.map((car: CarObj) => {
+        if (car.id) return this.startDrive(car.id);
+      });
+      const success = await  Promise.race(promises);
+      if (success) {
+        const checkWinner: WinnerObj[] = await getWinner(success.id);
+        let finalTime: number = success.time / 1000;
+        let winnerCount = 1;
+        if (checkWinner.length) {
+          winnerCount = checkWinner[0].wins + 1;
+          finalTime = success.time / 1000 < checkWinner[0].time ? success.time / 1000 :  checkWinner[0].time;
+          const winner: WinnerObj = {
+            time: finalTime,
+            wins: winnerCount,
+            id: success.id,
+          };
+          await updateWinner(winner, success.id);
+        } else {
+          const winner: WinnerObj = {
+            time: finalTime,
+            wins: winnerCount,
+            id: success.id,
+          };
+          await setWinner(winner);
+        }
+        await winnersListComponent.createList();
+      }
+    }
+
+  }
+
+  private async reset() {
+    const currentPage: string | null = localStorage.getItem('garagePage');
+    if (currentPage) {
+      const cars = await getCars(+currentPage);
+      const promises = cars.map((car: CarObj) => {
+        if (car.id) this.stopDrive(car.id);
+      });
+      await  Promise.all(promises);
+    }
+
   }
 }
 

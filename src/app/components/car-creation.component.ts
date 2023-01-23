@@ -14,7 +14,6 @@ export class CarCreationComponent extends MPComponent {
   public createCarCreationBlock(): void {
     const data: string | null = localStorage.getItem('addCar');
     let carInfo: CarObj;
-    console.log(data);
     if (data) {
       carInfo = JSON.parse(data);
     } else {
