@@ -15,9 +15,14 @@ export class WinnersListComponent extends MPComponent {
   public async createList(): Promise<void> {
     const storagePage = +storage.getCurrentPage('winnersPage');
     const currentPage =  storagePage > 0 ? storagePage : localStorage.setItem('winnersPage', '1');
-    const winnersList: WinnerObj[] = await getAllWinners(+currentPage, 'id', 'ASC');
+    const winnersList: WinnerObj[] = await getAllWinners(+currentPage, 'wins', 'ASC');
     const totalWinners: number = await getAllWinnersCounter();
-    this.template = `<div><h1>Winners list (${totalWinners})</h1></div>`;
+    this.template = `
+        <div>
+            <h1>Winners list (${totalWinners})</h1>
+            <h3>Page #${currentPage}</h3>
+        </div>
+    `;
     this.template += `
     <table>
         <thead> 

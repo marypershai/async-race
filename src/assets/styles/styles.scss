@@ -5,6 +5,7 @@ $red-color: #e22d00;
 $grey-color: #1d1d1f;
 $green-color: #185218;
 $light-grey-color: #818381;
+$blue-color: #1d2f65;
 
 
 .car-game{
@@ -31,7 +32,12 @@ $light-grey-color: #818381;
 }
 
 .flag{
-  margin-right: 160px;
+  margin-right: 100px;
+}
+
+h4{
+  margin-bottom: 0;
+  margin-top: 10px;
 }
 
 .button {
@@ -124,13 +130,14 @@ $light-grey-color: #818381;
       transform: none;
     }
   }
-  &--create {
-    width: 100px;
-    border: 1px solid $grey-color;
-    background-color: $grey-color;
+  &--create, &--race, &--reset {
+    margin-left: 0;
+    border: 1px solid $blue-color;
+    background-color: $blue-color;
     color: #fff;
     &:hover {
-      color: $grey-color;
+      color: $blue-color;
     }
   }
+
 }

@@ -36,6 +36,36 @@ export async function getAllWinners(page: number, sort: 'id' | 'wins' | 'time', 
   return result;
 }
 
+export async function setWinner(config: WinnerObj): Promise<void> {
+  await (await fetch(winners, {
+    method: 'POST',
+    body: JSON.stringify(config),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })).json();
+}
+
+export async function updateWinner(config: WinnerObj, id: number): Promise<void> {
+  await (await fetch(`${winners}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(config),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })).json();
+}
+
+export async function getWinner(id: number): Promise<WinnerObj[]> {
+  const response = await fetch(`${winners}?id=${id}`);
+  if (response.status !== 200) {
+    return [{ 'id': id, 'wins': 0, 'time': 0 }];
+  } else {
+    const result = await response.json();
+    return result;
+  }
+}
+
 export async function getCar(id: number): Promise<CarObj[]> {
   const response = await fetch(`${garage}?id=${id}`);
   const result = await response.json();
@@ -95,9 +125,4 @@ export async function stopEngine(id: string) {
 export async function driveEngine(id: number): Promise<{ success: boolean }> {
   const response = await fetch(`${engine}?id=${id}&status=drive`, { method: 'PATCH' }).catch();
   return response.status !== 200 ? { success: false } : { ...(await response.json()) };
-  // if (response.status == 200) {
-  //   const result = await response.json();
-  //   return result;
-  // }
-  // throw new Error(`${ response.status}`);
 }
