@@ -139,5 +139,28 @@ h4{
       color: $blue-color;
     }
   }
+}
+.sort-wins, .sort-time{
+  cursor: pointer;
+}
 
+th{
+  min-width: 130px;
+  text-align: left;
+  &:first-child{
+    min-width: 20px;
+  }
+}
+
+.menu{
+  &-item{
+   text-decoration: none;
+    background-color: #5e5e5e;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    &:hover{
+      background-color: #464646;
+    }
+  }
 }

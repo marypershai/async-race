@@ -15,7 +15,12 @@ export class WinnersListComponent extends MPComponent {
   public async createList(): Promise<void> {
     const storagePage = +storage.getCurrentPage('winnersPage');
     const currentPage =  storagePage > 0 ? storagePage : localStorage.setItem('winnersPage', '1');
-    const winnersList: WinnerObj[] = await getAllWinners(+currentPage, 'wins', 'ASC');
+    const storageSort: string | null = localStorage.getItem('sorting');
+    let currentSort: { sort: string, order: string } = { sort: 'time', order: 'ASC' };
+    if (storageSort) {
+      currentSort = JSON.parse(storageSort);
+    }
+    const winnersList: WinnerObj[] = await getAllWinners(+currentPage, currentSort.sort, currentSort.order);
     const totalWinners: number = await getAllWinnersCounter();
     this.template = `
         <div>
@@ -30,8 +35,8 @@ export class WinnersListComponent extends MPComponent {
               <th>№</th>
               <th>Image</th>
               <th>Name</th>
-              <th>Wins</th>
-              <th>Best Time</th>
+              <th class="sort-wins ${currentSort.order}">Wins</th>
+              <th class="sort-time ${currentSort.order}">Best Time</th>
             </tr>
         </thead>
     `;
@@ -53,6 +58,55 @@ export class WinnersListComponent extends MPComponent {
       this.render();
     }
 
+  }
+
+  public events(): Record<string, string> {
+    return {
+      'click .sort-wins': 'sortWins',
+      'click .sort-time': 'sortTime',
+    };
+  }
+
+  private async sortWins(event: Event): Promise<void> {
+    const target = event.currentTarget as HTMLElement;
+    const currentPage: string | null = localStorage.getItem('winnersPage');
+    if (currentPage) {
+      const sorting = { sort: 'wins', order: 'ASC' };
+      if (target.classList.contains('ASC')) {
+        target.classList.remove('ASC');
+        target.classList.add('DESC');
+        sorting.order = 'DESC';
+        localStorage.setItem('sorting', JSON.stringify(sorting));
+        await this.createList();
+      } else {
+        target.classList.remove('DESC');
+        target.classList.add('ASC');
+        sorting.order = 'ASC';
+        localStorage.setItem('sorting', JSON.stringify(sorting));
+        await this.createList();
+      }
+    }
+  }
+
+  private async sortTime(event: Event): Promise<void> {
+    const target = event.currentTarget as HTMLElement;
+    const currentPage: string | null = localStorage.getItem('winnersPage');
+    if (currentPage) {
+      const sorting = { sort: 'time', order: 'ASC' };
+      if (target.classList.contains('ASC')) {
+        target.classList.remove('ASC');
+        target.classList.add('DESC');
+        sorting.order = 'DESC';
+        localStorage.setItem('sorting', JSON.stringify(sorting));
+        await this.createList();
+      } else {
+        target.classList.remove('DESC');
+        target.classList.add('ASC');
+        sorting.order = 'ASC';
+        localStorage.setItem('sorting', JSON.stringify(sorting));
+        await this.createList();
+      }
+    }
   }
 }
 
