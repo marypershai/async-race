@@ -25,8 +25,11 @@ export class GarageListComponent extends MPComponent {
   }
 
   public async createList(): Promise<void> {
-    const storagePage = +storage.getCurrentPage('garagePage');
-    const currentPage =  storagePage > 0 ? storagePage : localStorage.setItem('garagePage', '1'); 
+    const storagePage: number = +storage.getCurrentPage('garagePage');
+    if (storagePage <= 0) {
+      localStorage.setItem('garagePage', '1');
+    }
+    const currentPage: string =  storage.getCurrentPage('garagePage');
     const carList: CarObj[] = await getCars(+currentPage);
     const totalCars: number = await getAllCarsCounter();
     this.template = `
@@ -100,7 +103,7 @@ export class GarageListComponent extends MPComponent {
     const carID: string | null = carEl.getAttribute('data-id');
 
     if (carID && startButton.classList.contains('button--start')) {
-      this.startDrive(+carID);
+      await this.startDrive(+carID);
     }
   }
 
@@ -109,7 +112,7 @@ export class GarageListComponent extends MPComponent {
     const carEl = stopButton.closest('.car') as HTMLElement;
     const carID: string | null = carEl.getAttribute('data-id');
     if (carID && stopButton.classList.contains('button--stop')) {
-      this.stopDrive(+carID);
+      await this.stopDrive(+carID);
     }
   }
 
@@ -134,7 +137,7 @@ export class GarageListComponent extends MPComponent {
     const car = carEl.querySelector('.car-img') as HTMLElement;
     const flag = carEl.querySelector('.flag') as HTMLElement;
 
-    const htmlDistance = Math.floor(getDistanceBetweenElements(car, flag)) + 60;
+    const htmlDistance = Math.floor(getDistanceBetweenElements(car, flag)) + flag.offsetWidth;
 
     const animationID: { id: number } = animation(car, htmlDistance, time);
     const { success } = await driveEngine(id);
@@ -154,7 +157,7 @@ export class GarageListComponent extends MPComponent {
     startButton.removeAttribute('disabled');
     const car = carEl.querySelector('.car-img') as HTMLElement;
     car.style.transform = 'translateX(0)';
-    const animationID = localStorage.getItem('animationID');
+    const animationID: string | null = localStorage.getItem('animationID');
     if (animationID) {
       window.cancelAnimationFrame(+animationID);
     }
@@ -170,23 +173,18 @@ export class GarageListComponent extends MPComponent {
       const success = await  Promise.race(promises);
       if (success) {
         const checkWinner: WinnerObj[] = await getWinner(success.id);
-        let finalTime: number = success.time / 1000;
-        let winnerCount = 1;
+        const finalTime: number = success.time / 1000;
+        const winnerCount = 1;
+        const winner: WinnerObj = {
+          time: finalTime,
+          wins: winnerCount,
+          id: success.id,
+        };
         if (checkWinner.length) {
-          winnerCount = checkWinner[0].wins + 1;
-          finalTime = success.time / 1000 < checkWinner[0].time ? success.time / 1000 :  checkWinner[0].time;
-          const winner: WinnerObj = {
-            time: finalTime,
-            wins: winnerCount,
-            id: success.id,
-          };
+          winner.wins = checkWinner[0].wins + 1;
+          winner.time = success.time / 1000 < checkWinner[0].time ? success.time / 1000 :  checkWinner[0].time;
           await updateWinner(winner, success.id);
         } else {
-          const winner: WinnerObj = {
-            time: finalTime,
-            wins: winnerCount,
-            id: success.id,
-          };
           await setWinner(winner);
         }
         await winnersListComponent.createList();

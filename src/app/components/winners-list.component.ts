@@ -14,7 +14,10 @@ export class WinnersListComponent extends MPComponent {
 
   public async createList(): Promise<void> {
     const storagePage = +storage.getCurrentPage('winnersPage');
-    const currentPage =  storagePage > 0 ? storagePage : localStorage.setItem('winnersPage', '1');
+    if (storagePage <= 0) {
+      localStorage.setItem('winnersPage', '1');
+    }
+    const currentPage: string =  storage.getCurrentPage('winnersPage');
     const storageSort: string | null = localStorage.getItem('sorting');
     let currentSort: { sort: string, order: string } = { sort: 'time', order: 'ASC' };
     if (storageSort) {

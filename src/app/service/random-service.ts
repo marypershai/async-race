@@ -3,13 +3,13 @@ import { CarObj } from '../../framework/tools/interfaces';
 const models = ['Tesla', 'BMW', 'Renault', 'Opel', 'Mini', 'Porshe', 'Toyota', 'Lada', 'Volkswagen', 'Audi', 'Lexus'];
 const names = ['Model S', 'x5', 'Stepway', 'Zafira', 'Cooper', 'Cayman', 'Camry', 'Kalina', 'Polo', 'Jetta', 'Bora'];
 
-function getRandomInt(max: number) {
+function getRandomInt(max: number): number {
   return Math.floor(Math.random() * max);
 }
 
 function getRandomName(): string {
-  const model = models[getRandomInt(models.length)];
-  const name = names[getRandomInt(names.length)];
+  const model: string = models[getRandomInt(models.length)];
+  const name: string = names[getRandomInt(names.length)];
   return `${model} ${name}`;
 }
 

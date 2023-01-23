@@ -1,4 +1,4 @@
-import { CarObj, WinnerObj } from '../../framework/tools/interfaces';
+import { CarObj, EngineObj, WinnerObj } from '../../framework/tools/interfaces';
 
 const serverURL = 'http://localhost:3000';
 
@@ -10,27 +10,27 @@ export const MAX_CARS_ON_GARAGE_PAGE = 7;
 export const MAX_CARS_ON_WINNERS_PAGE = 10;
 
 export async function getCars(page: number): Promise<CarObj[]> {
-  const response = await fetch(`${garage}?_page=${page}&_limit=${MAX_CARS_ON_GARAGE_PAGE}`);
-  const result = await response.json();
+  const response: Response = await fetch(`${garage}?_page=${page}&_limit=${MAX_CARS_ON_GARAGE_PAGE}`);
+  const result: Promise<CarObj[]> = await response.json();
   const totalCars: string = response.headers.get('X-Total-Count') ?? '';
   localStorage.setItem('totalCars', totalCars);
   return result;
 }
 
 export async function getAllCarsCounter(): Promise<number> {
-  const response = await fetch(`${garage}`);
-  const result = await response.json();
+  const response: Response = await fetch(`${garage}`);
+  const result: CarObj[] = await response.json();
   return result.length;
 }
 
 export  async function getGaragePagesCounter(): Promise<number> {
-  const totalCars = await getAllCarsCounter();
+  const totalCars: number = await getAllCarsCounter();
   return Math.ceil(totalCars / MAX_CARS_ON_GARAGE_PAGE);
 }
 
 export async function getAllWinners(page: number, sort: string, order: string): Promise<WinnerObj[]> {
-  const response = await fetch(`${winners}?_page=${page}&_limit=${MAX_CARS_ON_WINNERS_PAGE}&_sort=${sort}&_order=${order}`);
-  const result = await response.json();
+  const response: Response = await fetch(`${winners}?_page=${page}&_limit=${MAX_CARS_ON_WINNERS_PAGE}&_sort=${sort}&_order=${order}`);
+  const result: WinnerObj[] = await response.json();
   const totalCars: string = response.headers.get('X-Total-Count') ?? '';
   localStorage.setItem('totalWinners', totalCars);
   return result;
@@ -57,24 +57,24 @@ export async function updateWinner(config: WinnerObj, id: number): Promise<void>
 }
 
 export async function getWinner(id: number): Promise<WinnerObj[]> {
-  const response = await fetch(`${winners}?id=${id}`);
+  const response: Response = await fetch(`${winners}?id=${id}`);
   if (response.status !== 200) {
     return [{ 'id': id, 'wins': 0, 'time': 0 }];
   } else {
-    const result = await response.json();
+    const result: WinnerObj[] = await response.json();
     return result;
   }
 }
 
 export async function getCar(id: number): Promise<CarObj[]> {
-  const response = await fetch(`${garage}?id=${id}`);
-  const result = await response.json();
+  const response: Response = await fetch(`${garage}?id=${id}`);
+  const result: CarObj[] = await response.json();
   return result;
 }
 
 export async function getAllWinnersCounter(): Promise<number> {
-  const response = await fetch(`${winners}`);
-  const result = await response.json();
+  const response: Response = await fetch(`${winners}`);
+  const result: WinnerObj[] = await response.json();
   return result.length;
 }
 
@@ -89,8 +89,8 @@ export async function  createCar(config: CarObj): Promise<void> {
 }
 
 export async function deleteCar(id: number): Promise<number> {
-  const response = await fetch(`${garage}/${id}`, { method: 'DELETE' });
-  const result = await response.json();
+  const response: Response = await fetch(`${garage}/${id}`, { method: 'DELETE' });
+  const result: number = await response.json();
   return result;
 }
 
@@ -104,19 +104,19 @@ export async function  updateCar(id: number, config: CarObj): Promise<void> {
   })).json();
 }
 
-export async function startEngine(id: number) {
-  const response = await fetch(`${engine}?id=${id}&status=started`, { method: 'PATCH' });
+export async function startEngine(id: number): Promise<EngineObj> {
+  const response: Response = await fetch(`${engine}?id=${id}&status=started`, { method: 'PATCH' });
   if (response.status == 200) {
-    const result = await response.json();
+    const result: EngineObj = await response.json();
     return result;
   }
   throw new Error(`${response.status}`);
 }
 
-export async function stopEngine(id: string) {
-  const response = await fetch(`${engine}?id=${id}&status=stopped`, { method: 'PATCH' });
+export async function stopEngine(id: string): Promise<EngineObj> {
+  const response: Response = await fetch(`${engine}?id=${id}&status=stopped`, { method: 'PATCH' });
   if (response.status == 200) {
-    const result = await response.json();
+    const result: EngineObj = await response.json();
     return result;
   }
   throw new Error(`${response.status}`);

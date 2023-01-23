@@ -50,7 +50,7 @@ export class GarageButtonsComponent extends MPComponent {
   }
 
   private async getPreviousPage():Promise<void> {
-    const totalCarsPagesCounter = await getGaragePagesCounter();
+    const totalCarsPagesCounter: number = await getGaragePagesCounter();
     if (totalCarsPagesCounter > 1 ) {
       const currentPage: number = +storage.getCurrentPage('garagePage');
       const prevPage: number = currentPage - 1;
@@ -66,7 +66,7 @@ export class GarageButtonsComponent extends MPComponent {
   }
 
   private async getNextPage(): Promise<void> {
-    const totalCarsPagesCounter = await getGaragePagesCounter();
+    const totalCarsPagesCounter: number = await getGaragePagesCounter();
     if (totalCarsPagesCounter > 1 ) {
       const currentPage: number = +storage.getCurrentPage('garagePage');
       const nextPage: number = currentPage + 1;

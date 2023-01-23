@@ -52,7 +52,7 @@ export class CarCreationComponent extends MPComponent {
     }
   }
 
-  private saveData() {
+  private saveData(): void {
     const carName: string = (document.querySelector('.input-car-name') as HTMLInputElement).value;
     const carColor: string = (document.querySelector('.color-picker') as HTMLInputElement).value;
     const car: CarObj = { name: `${carName}`, color: `${carColor}` };
