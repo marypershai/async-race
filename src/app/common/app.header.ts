@@ -13,8 +13,8 @@ export const appHeader = new AppHeader({
   selector: 'app-header',
   template: `
         <header class="menu">
-          <a href="#">Garage</a>
-          <a href="#winners">Winners</a>
+          <a href="#" class="menu-item">Garage</a>
+          <a href="#winners" class="menu-item">Winners</a>
         </header>
     `,
   childComponents: [],

@@ -28,8 +28,8 @@ export  async function getGaragePagesCounter(): Promise<number> {
   return Math.ceil(totalCars / MAX_CARS_ON_GARAGE_PAGE);
 }
 
-export async function getAllWinners(page: number, sort: 'id' | 'wins' | 'time', order: 'ASC' | 'DESC'): Promise<WinnerObj[]> {
-  const response = await fetch(`${winners}?_page=${page}&_limit=${MAX_CARS_ON_WINNERS_PAGE}&_sort=${sort}s&_order=${order}`);
+export async function getAllWinners(page: number, sort: string, order: string): Promise<WinnerObj[]> {
+  const response = await fetch(`${winners}?_page=${page}&_limit=${MAX_CARS_ON_WINNERS_PAGE}&_sort=${sort}&_order=${order}`);
   const result = await response.json();
   const totalCars: string = response.headers.get('X-Total-Count') ?? '';
   localStorage.setItem('totalWinners', totalCars);
