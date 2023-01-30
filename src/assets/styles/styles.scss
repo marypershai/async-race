@@ -1,0 +1,166 @@
+$text-color: #1d1d1f;
+$text-secondary-color: #e7edee;
+
+$red-color: #e22d00;
+$grey-color: #1d1d1f;
+$green-color: #185218;
+$light-grey-color: #818381;
+$blue-color: #1d2f65;
+
+
+.car-game{
+  display: flex;
+}
+
+.game-controls{
+  display: flex;
+  flex-direction: column;
+}
+
+.car-info{
+  flex-grow: 1;
+  border-bottom: #1f1e1e dashed 3px;
+}
+
+.car{
+  margin-bottom: 2em;
+}
+
+.car-block{
+  display: flex;
+  justify-content: space-between;
+}
+
+.flag{
+  margin-right: 100px;
+}
+
+h4{
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+
+.button {
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid $red-color;
+  border-radius: 6px;
+  background-color: $red-color;
+  color: #fff;
+  font-size: 16px;
+  transition: all .8s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  padding: 10px;
+  margin: 10px;
+
+  &:hover{
+    color: $red-color;
+    border: 1px solid $text-color;
+
+    &::before {
+      transform: translateX(0);
+    }
+  }
+
+  &:active::before {
+    background: #fff;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    transition: all .5s;
+    z-index: -1;
+    transform: translateX(-101%);
+  }
+
+  &--edit, &--remove{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid $grey-color;
+    background-color: $grey-color;
+    &:hover{
+      color: $grey-color;
+    }
+  }
+
+  &--start{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid $green-color;
+    background-color: $green-color;
+    flex-grow: 1;
+    &:hover{
+      color: $green-color;
+    }
+  }
+
+  &--stop{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid $red-color;
+    background-color: $red-color;
+    flex-grow: 1;
+    &:hover{
+      color: $red-color;
+    }
+  }
+
+  &:disabled{
+    border: 1px solid $light-grey-color;
+    background-color: $light-grey-color;
+    color: $light-grey-color;
+    cursor: auto;
+    &:hover{
+      color: $light-grey-color;
+      &::before{
+        transition: none;
+        transform: none;
+      }
+    }
+    &::before{
+      transition: none;
+      transform: none;
+    }
+  }
+  &--create, &--race, &--reset {
+    margin-left: 0;
+    border: 1px solid $blue-color;
+    background-color: $blue-color;
+    color: #fff;
+    &:hover {
+      color: $blue-color;
+    }
+  }
+}
+.sort-wins, .sort-time{
+  cursor: pointer;
+}
+
+th{
+  min-width: 130px;
+  text-align: left;
+  &:first-child{
+    min-width: 20px;
+  }
+}
+
+.menu{
+  &-item{
+   text-decoration: none;
+    background-color: #5e5e5e;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    &:hover{
+      background-color: #464646;
+    }
+  }
+}
