@@ -16,8 +16,9 @@ function getRandomName(): string {
 function getRandomColor(): string {
   const letters = '0123456789ABCDEF';
   let color = '#';
-  for (let i = 0; i < 6; i += 1) {
-    color += letters[Math.floor((Math.random() * 16))];
+  const NUMBER_HEX_LENGTH = 6;
+  for (let i = 0; i < NUMBER_HEX_LENGTH; i += 1) {
+    color += letters[Math.floor((Math.random() * letters.length))];
   }
   return color;
 }

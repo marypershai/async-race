@@ -48,3 +48,23 @@ export function createCarUI(config: CarObj): string {
   return templateCar;
 }
 
+export function getCarNameColor(edit?: boolean): CarObj {
+  const editFlag: string = edit ? '-edit' : '';
+  const carName: string = (document.querySelector(`.input-car-name${editFlag}`) as HTMLInputElement).value;
+  const carColor: string = (document.querySelector(`.color-picker${editFlag}`) as HTMLInputElement).value;
+  return { name: `${carName}`, color: `${carColor}` };
+}
+
+export function gerCurrentCarInfo(elem: Event): number | undefined {
+  const target = elem.target as HTMLElement;
+  const carEl = target.closest('.car') as HTMLElement;
+  const carID: string | null = carEl.getAttribute('data-id');
+  return carID ? +carID : undefined;
+}
+
+export function getCarControls(carId: number):{ carEl: HTMLElement, startButton: HTMLElement, stopButton: HTMLElement } {
+  const carEl = document.querySelector(`[data-id = '${carId}']`) as HTMLElement;
+  const startButton = carEl.querySelector('.button--start') as HTMLElement;
+  const stopButton = carEl.querySelector('.button--stop') as HTMLElement;
+  return { carEl, startButton, stopButton };
+}

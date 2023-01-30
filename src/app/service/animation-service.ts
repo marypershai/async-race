@@ -1,3 +1,5 @@
+import { carValue } from '../../framework/tools/types';
+
 export function animation(car: HTMLElement, distance: number, animationTime: number): { id: number } {
 
   let start: number | null = null;
@@ -21,7 +23,7 @@ export function animation(car: HTMLElement, distance: number, animationTime: num
 }
 
 function getElementCenter(element: HTMLElement): { x: number, y: number } {
-  const { top, left, width, height }: { top:number, left:number, width:number, height:number } = element.getBoundingClientRect();
+  const { top, left, width, height }: carValue = element.getBoundingClientRect();
   return {
     x: left + width / 2,
     y: top + height / 2,

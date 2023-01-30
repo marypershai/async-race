@@ -1,4 +1,5 @@
 import { CarObj, EngineObj, WinnerObj } from '../../framework/tools/interfaces';
+import { allWinnersInfo } from '../../framework/tools/types';
 
 const serverURL = 'http://localhost:3000';
 
@@ -8,6 +9,16 @@ const engine = `${serverURL}/engine`;
 
 export const MAX_CARS_ON_GARAGE_PAGE = 7;
 export const MAX_CARS_ON_WINNERS_PAGE = 10;
+
+function getConfigObj(method: string, config: WinnerObj | CarObj): RequestInit {
+  return {
+    method: `${method}`,
+    body: JSON.stringify(config),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+}
 
 export async function getCars(page: number): Promise<CarObj[]> {
   const response: Response = await fetch(`${garage}?_page=${page}&_limit=${MAX_CARS_ON_GARAGE_PAGE}`);
@@ -28,8 +39,8 @@ export  async function getGaragePagesCounter(): Promise<number> {
   return Math.ceil(totalCars / MAX_CARS_ON_GARAGE_PAGE);
 }
 
-export async function getAllWinners(page: number, sort: string, order: string): Promise<WinnerObj[]> {
-  const response: Response = await fetch(`${winners}?_page=${page}&_limit=${MAX_CARS_ON_WINNERS_PAGE}&_sort=${sort}&_order=${order}`);
+export async function getAllWinners(allWinners: allWinnersInfo): Promise<WinnerObj[]> {
+  const response: Response = await fetch(`${winners}?_page=${allWinners.page}&_limit=${MAX_CARS_ON_WINNERS_PAGE}&_sort=${allWinners.sort}&_order=${allWinners.order}`);
   const result: WinnerObj[] = await response.json();
   const totalCars: string = response.headers.get('X-Total-Count') ?? '';
   localStorage.setItem('totalWinners', totalCars);
@@ -37,23 +48,11 @@ export async function getAllWinners(page: number, sort: string, order: string): 
 }
 
 export async function setWinner(config: WinnerObj): Promise<void> {
-  await (await fetch(winners, {
-    method: 'POST',
-    body: JSON.stringify(config),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })).json();
+  await (await fetch(winners, getConfigObj('POST', config))).json();
 }
 
 export async function updateWinner(config: WinnerObj, id: number): Promise<void> {
-  await (await fetch(`${winners}/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(config),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })).json();
+  await (await fetch(`${winners}/${id}`, getConfigObj('PUT', config))).json();
 }
 
 export async function getWinner(id: number): Promise<WinnerObj[]> {
@@ -79,13 +78,7 @@ export async function getAllWinnersCounter(): Promise<number> {
 }
 
 export async function  createCar(config: CarObj): Promise<void> {
-  await (await fetch(garage, {
-    method: 'POST',
-    body: JSON.stringify(config),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })).json();
+  await (await fetch(garage, getConfigObj('POST', config))).json();
 }
 
 export async function deleteCar(id: number): Promise<number> {
@@ -95,13 +88,7 @@ export async function deleteCar(id: number): Promise<number> {
 }
 
 export async function  updateCar(id: number, config: CarObj): Promise<void> {
-  await (await fetch(`${garage}/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(config),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })).json();
+  await (await fetch(`${garage}/${id}`, getConfigObj('PUT', config))).json();
 }
 
 export async function startEngine(id: number): Promise<EngineObj> {
@@ -126,3 +113,4 @@ export async function driveEngine(id: number): Promise<{ success: boolean }> {
   const response = await fetch(`${engine}?id=${id}&status=drive`, { method: 'PATCH' }).catch();
   return response.status !== 200 ? { success: false } : { ...(await response.json()) };
 }
+

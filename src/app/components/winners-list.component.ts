@@ -3,6 +3,8 @@ import { MPComponent } from '../../framework/index';
 import { getAllWinners, getAllWinnersCounter, getCar } from '../service/api-service';
 import { storage } from '../service/localStorage-service';
 import { createCarImg } from '../service/car-service';
+import { setSorting } from '../service/sorting-service';
+import { allWinnersInfo } from '../../framework/tools/types';
 
 
 export class WinnersListComponent extends MPComponent {
@@ -13,22 +15,23 @@ export class WinnersListComponent extends MPComponent {
   }
 
   public async createList(): Promise<void> {
-    const storagePage = +storage.getCurrentPage('winnersPage');
+    let storagePage = +storage.getCurrentPage('winnersPage');
     if (storagePage <= 0) {
       localStorage.setItem('winnersPage', '1');
+      storagePage = 1;
     }
-    const currentPage: string =  storage.getCurrentPage('winnersPage');
     const storageSort: string | null = localStorage.getItem('sorting');
     let currentSort: { sort: string, order: string } = { sort: 'time', order: 'ASC' };
     if (storageSort) {
       currentSort = JSON.parse(storageSort);
     }
-    const winnersList: WinnerObj[] = await getAllWinners(+currentPage, currentSort.sort, currentSort.order);
+    const winnersInfo: allWinnersInfo = { page: +storagePage, sort: currentSort.sort, order: currentSort.order };
+    const winnersList: WinnerObj[] = await getAllWinners(winnersInfo);
     const totalWinners: number = await getAllWinnersCounter();
     this.template = `
         <div>
             <h1>Winners list (${totalWinners})</h1>
-            <h3>Page #${currentPage}</h3>
+            <h3>Page #${storagePage}</h3>
         </div>
     `;
     this.template += `
@@ -74,20 +77,13 @@ export class WinnersListComponent extends MPComponent {
     const target = event.currentTarget as HTMLElement;
     const currentPage: string | null = localStorage.getItem('winnersPage');
     if (currentPage) {
-      const sorting = { sort: 'wins', order: 'ASC' };
       if (target.classList.contains('ASC')) {
-        target.classList.remove('ASC');
-        target.classList.add('DESC');
-        sorting.order = 'DESC';
-        localStorage.setItem('sorting', JSON.stringify(sorting));
-        await this.createList();
+        setSorting('ASC', target, 'wins');
       } else {
-        target.classList.remove('DESC');
-        target.classList.add('ASC');
-        sorting.order = 'ASC';
-        localStorage.setItem('sorting', JSON.stringify(sorting));
-        await this.createList();
+        setSorting('DESC', target, 'wins');
       }
+
+      await this.createList();
     }
   }
 
@@ -95,20 +91,12 @@ export class WinnersListComponent extends MPComponent {
     const target = event.currentTarget as HTMLElement;
     const currentPage: string | null = localStorage.getItem('winnersPage');
     if (currentPage) {
-      const sorting = { sort: 'time', order: 'ASC' };
       if (target.classList.contains('ASC')) {
-        target.classList.remove('ASC');
-        target.classList.add('DESC');
-        sorting.order = 'DESC';
-        localStorage.setItem('sorting', JSON.stringify(sorting));
-        await this.createList();
+        setSorting('ASC', target, 'time');
       } else {
-        target.classList.remove('DESC');
-        target.classList.add('ASC');
-        sorting.order = 'ASC';
-        localStorage.setItem('sorting', JSON.stringify(sorting));
-        await this.createList();
+        setSorting('ASC', target, 'time');
       }
+      await this.createList();
     }
   }
 }

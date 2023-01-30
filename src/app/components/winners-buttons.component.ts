@@ -3,6 +3,8 @@ import { MPComponent } from '../../framework/index';
 import { getGaragePagesCounter } from '../service/api-service';
 import { storage } from '../service/localStorage-service';
 import { winnersListComponent } from './winners-list.component';
+import { getButtonStatus } from '../service/buttons-service';
+import { elementRemoveDisabled, elementSetDisabled } from '../service/element-service';
 
 
 export class WinnersButtonsComponent extends MPComponent {
@@ -29,17 +31,7 @@ export class WinnersButtonsComponent extends MPComponent {
   private async checkButtonStatus(button: string): Promise<string> {
     const totalCarsPagesCounter: number = await getGaragePagesCounter();
     const currentPage: number = +storage.getCurrentPage('winnersPage');
-    if (totalCarsPagesCounter > 1) {
-      if (button === 'prev') {
-        if (currentPage > 1) {
-          return '';
-        } else return 'disabled';
-      } else if (totalCarsPagesCounter === currentPage) {
-        return 'disabled';
-      } else return '';
-    } else {
-      return 'disabled';
-    }
+    return getButtonStatus(button, totalCarsPagesCounter, currentPage);
   }
 
   public events(): Record<string, string> {
@@ -57,7 +49,8 @@ export class WinnersButtonsComponent extends MPComponent {
       storage.setCurrentPage('winnersPage', prevPage);
       await winnersListComponent.createList();
       if (prevPage === 1) {
-        (document.querySelector('.button--prev') as HTMLElement).setAttribute('disabled', '');
+        const prevButton = document.querySelector('.button--prev') as HTMLElement;
+        elementSetDisabled(prevButton);
       }
     }
   }
@@ -69,9 +62,11 @@ export class WinnersButtonsComponent extends MPComponent {
       const nextPage: number = currentPage + 1;
       storage.setCurrentPage('winnersPage', nextPage);
       await winnersListComponent.createList();
-      (document.querySelector('.button--prev') as HTMLElement).removeAttribute('disabled');
+      const prevButton = document.querySelector('.button--prev') as HTMLElement;
+      elementRemoveDisabled(prevButton);
       if (totalCarsPagesCounter === nextPage) {
-        (document.querySelector('.button--next') as HTMLElement).setAttribute('disabled', '');
+        const nextButton = document.querySelector('.button--next') as HTMLElement;
+        elementSetDisabled(nextButton);
       }
     }
   }

@@ -3,6 +3,8 @@ import { MPComponent } from '../../framework/index';
 import { garageListComponent } from './garage-list.component';
 import { createCar } from '../service/api-service';
 import { garageButtonsComponent } from './garage-buttons.component';
+import { storage } from '../service/localStorage-service';
+import { getCarNameColor } from '../service/car-service';
 
 
 export class CarCreationComponent extends MPComponent {
@@ -12,16 +14,7 @@ export class CarCreationComponent extends MPComponent {
   }
 
   public createCarCreationBlock(): void {
-    const data: string | null = localStorage.getItem('addCar');
-    let carInfo: CarObj;
-    if (data) {
-      carInfo = JSON.parse(data);
-    } else {
-      carInfo = {
-        name: '',
-        color: '#000000',
-      };
-    }
+    const carInfo: CarObj = storage.getCarFromLocalStorage();
     this.template = `
         <div class="create-car">
           <input class="input-car-name" type="text" required value="${carInfo.name}">
@@ -41,11 +34,9 @@ export class CarCreationComponent extends MPComponent {
 
   private async addCar(event: Event): Promise<void> {
     const targetEl = event.target as HTMLElement;
-    const carColor: string = (document.querySelector('.color-picker') as HTMLInputElement).value;
-    const carName: string = (document.querySelector('.input-car-name') as HTMLInputElement).value;
-    const car: CarObj = { name: `${carName}`, color: `${carColor}` };
-    localStorage.setItem('addCar', JSON.stringify(car));
-    if (targetEl && carName !== '') {
+    const car: CarObj = getCarNameColor();
+    storage.setToLocalStorage('addCar', car);
+    if (targetEl && car.name !== '') {
       await createCar(car);
       await garageListComponent.createList();
       await garageButtonsComponent.createButtonsBlock();
@@ -53,10 +44,8 @@ export class CarCreationComponent extends MPComponent {
   }
 
   private saveData(): void {
-    const carName: string = (document.querySelector('.input-car-name') as HTMLInputElement).value;
-    const carColor: string = (document.querySelector('.color-picker') as HTMLInputElement).value;
-    const car: CarObj = { name: `${carName}`, color: `${carColor}` };
-    localStorage.setItem('addCar', JSON.stringify(car));
+    const car: CarObj = getCarNameColor();
+    storage.setToLocalStorage('addCar', car);
     this.createCarCreationBlock();
   }
 }

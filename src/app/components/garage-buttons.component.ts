@@ -3,6 +3,8 @@ import { MPComponent } from '../../framework/index';
 import { garageListComponent } from './garage-list.component';
 import { getGaragePagesCounter } from '../service/api-service';
 import { storage } from '../service/localStorage-service';
+import { elementRemoveDisabled, elementSetDisabled } from '../service/element-service';
+import { getButtonStatus } from '../service/buttons-service';
 
 
 export class GarageButtonsComponent extends MPComponent {
@@ -29,17 +31,7 @@ export class GarageButtonsComponent extends MPComponent {
   private async checkButtonStatus(button: string): Promise<string> {
     const totalCarsPagesCounter: number = await getGaragePagesCounter();
     const currentPage: number = +storage.getCurrentPage('garagePage');
-    if (totalCarsPagesCounter > 1) {
-      if (button === 'prev') {
-        if (currentPage > 1) {
-          return '';
-        } else return 'disabled';
-      } else if (totalCarsPagesCounter === currentPage) {
-        return 'disabled';
-      } else return '';
-    } else {
-      return 'disabled';
-    }
+    return getButtonStatus(button, totalCarsPagesCounter, currentPage);
   }
 
   public events(): Record<string, string> {
@@ -57,10 +49,12 @@ export class GarageButtonsComponent extends MPComponent {
       storage.setCurrentPage('garagePage', prevPage);
       await garageListComponent.createList();
       if (prevPage === 1) {
-        (document.querySelector('.button--prev') as HTMLElement).setAttribute('disabled', '');
+        const prevButton = document.querySelector('.button--prev') as HTMLElement;
+        elementSetDisabled(prevButton);
       }
       if (currentPage < totalCarsPagesCounter) {
-        (document.querySelector('.button--next') as HTMLElement).removeAttribute('disabled');
+        const nextButton = document.querySelector('.button--next') as HTMLElement;
+        elementRemoveDisabled(nextButton);
       }
     }
   }
@@ -72,9 +66,11 @@ export class GarageButtonsComponent extends MPComponent {
       const nextPage: number = currentPage + 1;
       storage.setCurrentPage('garagePage', nextPage);
       await garageListComponent.createList();
-      (document.querySelector('.button--prev') as HTMLElement).removeAttribute('disabled');
+      const prevButton = document.querySelector('.button--prev') as HTMLElement;
+      elementRemoveDisabled(prevButton);
       if (totalCarsPagesCounter === nextPage) {
-        (document.querySelector('.button--next') as HTMLElement).setAttribute('disabled', '');
+        const nextButton = document.querySelector('.button--next') as HTMLElement;
+        elementSetDisabled(nextButton);
       }
     }
   }
